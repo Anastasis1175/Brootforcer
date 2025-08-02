@@ -6,8 +6,6 @@
 • Python 3.13 and later\
 • Latest Android Debug Bridge(adb)\
 • Android USB Debugging turned on\
-> Instructions in the end
-
 • Android Device in Fastboot mode
-
+> Instructions in the end
 
