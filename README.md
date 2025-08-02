@@ -1,7 +1,7 @@
 # Brootforcer is a tool that unlocks the bootloader on android and mainly on Huawei and Honor devices
 > This is my first Github repository.
 
-##Requirements
+## Requirements
 <ins>It works on devices up to EMUI 11.</ins>\
 • Python 3.13 and later\
 • Latest Android Debug Bridge(adb)\
