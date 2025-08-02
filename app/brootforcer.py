@@ -9,16 +9,36 @@
 # tool, hope it helps you :)
 #
 
-import sys
 import json
 import math
 import subprocess
 import os
 import configparser
+from pydub import AudioSegment
+
+# Set FFMPEG paths for a reliable solution
+os.environ["FFMPEG_BINARY"] = r"C:\ffmpeg\bin\ffmpeg.exe"
+os.environ["FFPROBE_BINARY"] = r"C:\ffmpeg\bin\ffprobe.exe"
+
+# Get the directory where the current script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+s1_path = os.path.join(script_dir, "sounds", "success1.mp3")
+
+try:
+    s1sound = AudioSegment.from_mp3(s1_path)
+except Exception as e:
+    s1sound = None
+
 config = configparser.ConfigParser()
-config.read('config.cfg')
-times_before_restart_str = config['main']['times_before_restart']
-times_before_restart = int(times_before_restart_str)
+config_file_path = os.path.join(script_dir, 'config.cfg')
+
+if os.path.exists(config_file_path):
+    config.read(config_file_path)
+    times_before_restart = int(config['main']['times_before_restart'])
+else:
+    print("Warning: config.cfg not found. Using default value for restarts.")
+    times_before_restart = 5
+
 
 def get_imei_from_file_or_user(filename='imei_list.json'):
     """
@@ -28,9 +48,11 @@ def get_imei_from_file_or_user(filename='imei_list.json'):
     """
     imei_list = None
     
-    if os.path.exists(filename):
+    imei_file_path = os.path.join(script_dir, filename)
+    
+    if os.path.exists(imei_file_path):
         try:
-            with open(filename, 'r') as file:
+            with open(imei_file_path, 'r') as file:
                 data = json.load(file)
             
             if isinstance(data, list):
@@ -54,7 +76,7 @@ def get_imei_from_file_or_user(filename='imei_list.json'):
         save_choice = input("Do you want to save your IMEI to a file? [Yes or No] ")
         if save_choice.lower() in ["y", "yes"]:
             try:
-                with open(filename, 'w') as file:
+                with open(imei_file_path, 'w') as file:
                     json.dump([str(user_imei)], file, indent=4)
                 print(f"IMEI = '{user_imei}' saved to '{filename}'.")
             except IOError:
@@ -78,29 +100,32 @@ def get_imei_from_file_or_user(filename='imei_list.json'):
             except ValueError:
                 print(f"'{choice_str}' is not a number. Please enter a number.")
                 
-def get_attempts():
+def get_attempts(filename='attempts.json'):
     '''
     Reads the list of failed passwords and returns them as a set.
     In case the attempts.json file does not exist (or is invalid),
     this function will return an empty set.
     '''
+    attempts_file_path = os.path.join(script_dir, filename)
+    
     try:
-        with open('attempts.json', 'r') as file:
+        with open(attempts_file_path, 'r') as file:
             attempts = json.load(file)
-            if type(attempts) == list:
+            if isinstance(attempts, list):
                 return set(attempts)
             else:
                 return set([])
-    except:
+    except (IOError, json.JSONDecodeError):
         return set([])
 
-def save_attempts(attempts = []):
+def save_attempts(attempts=[], filename='attempts.json'):
     '''
     Writes the current failed password attempts to an external file,
     which is later used to continue trying even more passwords...
     '''
-    with open('attempts.json', 'w') as file:
-        json.dump(attempts, file)
+    attempts_file_path = os.path.join(script_dir, filename)
+    with open(attempts_file_path, 'w') as file:
+        json.dump(list(attempts), file)
 
 def string_to_int_array(n):
     '''
@@ -120,7 +145,7 @@ def luhn_checksum(imei):
         checksum += sum(string_to_int_array(digit * 2))
     return checksum % 10
 
-def unlock_bootloader(imei, checksum, failed_attempts = set([])):
+def unlock_bootloader(imei, checksum, failed_attempts=set([]), times_before_restart=5):
     '''
     Generates new OEM codes/passwords and tries running "fastboot oem unlock"
     until it succeeds. 
@@ -148,7 +173,7 @@ def unlock_bootloader(imei, checksum, failed_attempts = set([])):
             return oem_code
         else:
             failed_attempts.add(oem_code)
-        if attempt_count >={times_before_restart} :
+        if attempt_count >= times_before_restart:
             attempt_count = 0
             save_attempts(list(failed_attempts))
             print('Restarting device...\n')
@@ -172,9 +197,19 @@ if __name__ == '__main__':
     )
     input('Press any key when your device is in fastboot mode...\n')
     failed_attempts = get_attempts()
-    oem_code = unlock_bootloader(imei, checksum, failed_attempts)
+    oem_code = unlock_bootloader(imei, checksum, failed_attempts, times_before_restart)
     subprocess.run(['fastboot', 'getvar', 'unlocked'])
     subprocess.run(['fastboot', 'reboot'])
     print('\n\n')
-    print(f'Device unlocked! OEM code/password: {oem_code}')
-    sys.exit()
+    print(f'Device unlocked! OEM code: {oem_code}')
+    oem_found = 1
+    if oem_found == 1:
+        oem_file_path = os.path.join(script_dir, 'oem_file.json')
+        answer = input(f"Would you like your OEM code ({oem_code}) to be saved in a file.")
+        if answer.lower() in ("yes", "y"):
+            try:
+                with open(oem_file_path, 'w') as file:
+                    json.dump(oem_code, file)
+                print("OEM code saved to oem_file.json")
+            except IOError as e:
+                print(f"Could not save OEM code: {e}")
