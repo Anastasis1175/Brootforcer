@@ -7,6 +7,7 @@
 • Latest Android Debug Bridge(adb)\
 • Android USB Debugging turned on\
 > Instructions in the end
+
 • Android Device in Fastboot mode
 
 
