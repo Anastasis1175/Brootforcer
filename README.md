@@ -37,7 +37,7 @@ python3 brootforcer.py
 ![Fasboot example](https://i.postimg.cc/4dRnz8TH/i4b7ipst5cd61.webp)
 9. When your device finally gets to fastboot mode you have to press enter.\
 ![Fasboot enter](https://i.postimg.cc/s2rvW6zQ/image.png)
-10. You have to leave your device with your computer until it finds the oem code. Eventually it will restart after a certain amount of tries. This is configurable see [Link Text](#config-file).![Attempts](https://i.postimg.cc/pVf5B5k5/image.png)
+10. You have to leave your device with your computer until it finds the oem code. Eventually it will restart after a certain amount of tries. This is configurable see [Config File](#config-file).![Attempts](https://i.postimg.cc/pVf5B5k5/image.png)
 11. When it finds the oem code it will stop and ask you if you want to save it to a file.Example of how the program ends![OEM_FINAL](https://i.postimg.cc/SQf7xvBP/image.png)
 
 ## Config File
@@ -50,4 +50,4 @@ In this file you can change how many tries the program attempts before it restar
 [ADB for Macos](https://dl.google.com/android/repository/platform-tools-latest-darwin.zip)
 [ADB for Linux](https://dl.google.com/android/repository/platform-tools-latest-linux.zip)
 # Disclaimer
-I am not the owner of the software above and I don't claim that I'm related to these software.
+I am not the owner of the software above and I don't claim that I'm related to the software that I have in the [Dependencies Downloads](#dependencies-downloads).
