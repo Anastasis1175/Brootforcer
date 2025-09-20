@@ -5,7 +5,7 @@
 <ins>It works on devices up to EMUI 11.</ins>\
 • Python 3.13 and later\
 • Latest Android Debug Bridge(adb)\
-• FFMPEG installation at: C:\FFMPEG
+• FFMPEG installation at: C:\ffmpeg
 [Downloads](#dependencies-downloads)
 
 ## Instructions
