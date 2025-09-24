@@ -5,8 +5,9 @@
 <ins>It works on devices up to EMUI 11.</ins>\
 • Python 3.13 and later\
 • Latest Android Debug Bridge(adb)\
-• FFMPEG installation at: C:\ffmpeg
-[Downloads](#dependencies-downloads)
+• FFMPEG installation at: C:\ffmpeg\
+[Downloads](#dependencies-downloads)\
+[Required Modules](#required-modules)
 
 ## Instructions
 1. Clone this repository with this command 
@@ -50,5 +51,7 @@ In this file you can change how many tries the program attempts before it restar
 [ADB for Windows](https://dl.google.com/android/repository/platform-tools-latest-windows.zip)
 [ADB for Macos](https://dl.google.com/android/repository/platform-tools-latest-darwin.zip)
 [ADB for Linux](https://dl.google.com/android/repository/platform-tools-latest-linux.zip)
+## Required Modules
+[requirements.txt](https://github.com/Anastasis1175/Brootforcer/blob/main/requirements.txt)
 # Disclaimer
 I am not the owner of the software above and I don't claim that I'm related to the software that I have in the [Dependencies Downloads](#dependencies-downloads).
